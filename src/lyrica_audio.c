@@ -1,17 +1,22 @@
+/* =============================== Libraries =============================== */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-/* Using gstreamer because idk */
+/* ========================== Additional Libraries ========================= */
 #include <gst/gst.h>
-#include <taglib/tag_c.h>   /* Display audio metadata */
+#include <taglib/tag_c.h>
 
+/* =========================== Funky Header Files ========================== */
 #include "lyrica.h"
 #include "lyrica_audio.h"
 
 char temp_string        [BUFF_STR];
 
-void* lyrica_audio_play(void *arg){
+/* =============================== Functions =============================== */
+
+void* lyrica_audio_play(void *arg)
+{
     char *song_path = (char*) arg;
 
     GstElement  *pipeline;

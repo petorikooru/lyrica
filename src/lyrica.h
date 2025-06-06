@@ -1,15 +1,17 @@
+/* =============================== Libraries =============================== */
 #include <stdint.h>
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <taglib/tag_c.h>
+#include <pthread.h>
 
 #ifndef BUFF_STR
 #define BUFF_STR 512
 #endif
 
-/* Terminal Color Controls */
+/* ============================= TERM Controls ============================= */
 #define BLK             "\e[30m"
 #define BLK_BG          "\e[40m"
 #define RED             "\e[31m"
@@ -34,11 +36,10 @@
 #define LME_BG          "\e[102m"
 #define RST             "\e[0m"
 
-/* Cursor and Terminal controls */
+#define CURSOR_HIDE     "\e[?25l"
 #define LINE_UP     "\e[A"
 #define LINE_ERASE  "\e[0K"
 #define POS_YX       "\e[%d;%dH"
-
 
 #ifndef LYRICA
 #define LYRICA
@@ -58,11 +59,12 @@ typedef struct {
     Durations   durations;
 } Song;
 
+/* =============================== Functions =============================== */
+
 bool lyrica_init();
 void lyrica_end(int sig);
 
-void lyrica_song_input();
-void lyrica_lyrics_input();
+bool lyrica_input();
 void lyrica_picture();
 void *lyrica_time(void *arg);
 void *lyrica_play(void *arg);

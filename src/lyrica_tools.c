@@ -1,10 +1,11 @@
-/* ============= Libraries ============ */
-#include <stdbool.h>     // ::{bool}
-#include <stdlib.h>      // ::{malloc, free, size_t} 
-#include <stdint.h>      // ::{int}
-#include <stdio.h>       // ::{fgets, getchar, fseek, rewind, fclose}
-#include <string.h>      // ::{strlen, strcmp}
+/* =============================== Libraries =============================== */
+#include <stdbool.h>    
+#include <stdlib.h>    
+#include <stdint.h> 
+#include <stdio.h>
+#include <string.h>
 #include <dirent.h>
+#include <time.h>
 
 #ifdef WIN32
     #include <Windows.h>
@@ -12,48 +13,39 @@
     #include <unistd.h>
 #endif
 
+/* =========================== Funky Header Files ========================== */
 #include "lyrica_tools.h"
+#include "lyrica.h"
 
-/* ============ Functions ============ */
+/* =============================== Functions =============================== */
 
-void input_string(char string[]){
+void input_string(char string[])
+{
     fgets(string, BUFF_STR, stdin);
     string[strlen(string) - 1] = '\0';
 }
-
-int32_t input_number(){
-    int32_t integer;
-    char input[BUFF_STR];
-    input_string(input);
-
-    // Check whether it is truly an integer
-    sscanf(input, "%d", &integer);
-
-    return integer;
-}
  
-bool input_filechecker(FILE *file){
+bool input_filechecker(char *filename)
+{
+    FILE *file_p = fopen(filename, "r");
     // Check whether the file exists at all
-    if (file == false) {
-        return false;
-    }
+    if (file_p == false) return false;
 
     // Check whether the file has 0 bytes of data
-    fseek(file, 0, SEEK_END);
-    const size_t size = ftell(file);
+    fseek(file_p, 0, SEEK_END);
+    const size_t size = ftell(file_p);
 
-    if (size > 0){
-        rewind(file);
+    if (size > 0) {
+        rewind(file_p);
         return true;
     } else {
-        fprintf(stderr, "FILE is empty!");
-
-        fclose(file);
+        fclose(file_p);
         return false;
     }
 }
 
-bool list_files(char *path){
+bool list_files(const char *path)
+{
     DIR *dir_p;
     struct dirent *dir;
     dir_p = opendir(path);
@@ -70,19 +62,19 @@ bool list_files(char *path){
     }
 }
 
-void delay (time_t minutes, time_t seconds, time_t miliseconds){
+void delay (const uint8_t minutes, const uint8_t seconds, const uint16_t miliseconds)
+{
     static uint32_t time_previous = 0;
 
-    fflush(stdout);
-
     /* In miliseconds */
-    uint32_t time_raw = ((minutes * 60 * 1000) + (seconds * 1000) + miliseconds);
+    uint32_t time_raw = ((minutes * SECONDS * MILI) + (seconds * MILI) + miliseconds);
     uint32_t time_placement = time_raw - time_previous;
 
     #ifdef WIN32
         Sleep(time_placement * 100);
     #else
-        usleep(time_placement * 1000);
+        usleep(time_placement * MILI);
+        fflush(stdout);
     #endif
 
     time_previous = time_raw;
